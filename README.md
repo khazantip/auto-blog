@@ -1,70 +1,283 @@
-# Getting Started with Create React App
+## Задание 2
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 1. React-приложение
 
-## Available Scripts
+#### 1.1. Создание проекта
 
-In the project directory, you can run:
+В проводнике открываем директорию, в которой необходимо создать папку с проектом. В этой директории открываем контекстное меню `Ctrl + Shift + ПКМ (правая кнопка мыши)`. Выбираем пункт `Открыть окно PowerShell здесь`. Далее, в командной строке пишем следующую команду:
 
-### `npm start`
+- `npx create-react-app <название проекта>` - создает проект и начальные файлы для работы (в том числе, git-репозиторий )
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+#### 1.2. Открытие проекта
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Открываем VS Code, выбираем `Файл (File)` -> `Открыть папку (Open folder)`. В открывшемся окне выбираем директорию с нашим проектом `<название проекта>` и подтверждаем выбор.
 
-### `npm test`
+#### 1.3. Подготовка проекта
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Удаляем файлы:
 
-### `npm run build`
+- `src/App.test.js`
+- `src/setupTests.js`
+  Переименовываем файлы:
+- `src/App.js` -> `src/App.jsx`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Открываем консоль путём нажатия клавиш `Ctrl + ~ (Ё)`. Устанавливаем библиотеки:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- `npm i react-router-dom` - для работы с навигацией
+- `npm i tailwindcss` - для работы с Tailwind (по желанию)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Если выбрали Tailwind, то его нужно инициализировать:
 
-### `npm run eject`
+- `npx tailwindcss init` - команда создает файл `tailwind.config.js` в корне проекта
+  В файл необходимо поместить код:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```js
+/**  @type  {import('tailwindcss').Config}  */
+module.exports = {
+  content: ["src/**/*.{js,jsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+В **начало** файла `index.css` код:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Создаём директории:
 
-## Learn More
+- `src/components` - для компонент (кнопки, поля ввода и т. п.)
+- `src/layouts` - для шаблонов страниц
+- `src/pages` - для содержимого страниц
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### 1.4. Наполнение сайта
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Для каждого компонента создаем отдельную директорию `src/components/<имя компонента>` с файлами `src/components/<имя компонента>/index.jsx` и `src/components/<имя компонента>/index.css` (css-файл, если не используем Tailwind)
+В файл `src/components/<имя компонента>/index.jsx` помещаем следующий код:
 
-### Code Splitting
+```js
+import './index.css';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+const <имя компонента> = () => {
+	return (...);
+}
 
-### Analyzing the Bundle Size
+export default <имя компонента>;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Для шаблонов создаем отдельную директорию `src/layouts/<имя шаблона>Layout` с файлами `src/layouts/<имя компонента>Layout/index.jsx` и `src/layouts/<имя компонента>Layout/index.css`
+В файл `src/layouts/<имя компонента>Layout/index.jsx` помещаем следующий код:
 
-### Making a Progressive Web App
+```js
+import { Outlet } from  'react-router-dom';
+import  './index.css';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+const Button = () => {
+	...
+	return (
+		...
+		<Outlet /> // на это место будет помещен некоторый контент
+		...
+	);
+}
 
-### Advanced Configuration
+export  default  Button;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+В файле `index.js` создаем роутер:
 
-### Deployment
+```js
+const router = createBrowserRouter([
+	{
+		path:  '/',
+		element:  <RootLayout  />,
+		children:  [
+			{
+				path:  '/',
+				element:  <HomePage  />
+			},
+			...
+		],
+	},
+	...
+]);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Здесь `RootLayout` - шаблон из директории `src/layouts`, а `HomePage` - страница из `src/pages`, которая была собрана из компонент, находящихся в `src/components`. Всё содержимое страницы `HomePage` будет помещено вместо компонента `Outlet`, который был размещён внутри шаблона `RootLayout`
 
-### `npm run build` fails to minify
+Заставляем React рендерить наш роутер:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```js
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>
+);
+```
+
+#### 1.6. Передача параметров в роутере
+
+Для передачи параметров в `react-router-dom` существует два метода:
+
+##### 1.6.1. Переменная пути
+
+Для использования переменной пути в роутере необходимо в путь элемента роутера вставить название переменной после двоеточия, например:
+
+```js
+{
+	path:  '/:id',
+	element:  <ProductCard  />
+},
+```
+
+Здесь указана переменная пути `id`, которой соответствует компонент некоторого продукта `ProductCard`. При этом в самом компоненте для получения переменной пути, по которому этот продукт был открыт, необходимо использовать хук `useParams`, который предоставляет объект, поля которого являются переменными пути. Например, для такого объекта роутера:
+
+```js
+{
+	path:  '/:department/:id',
+	element:  <EmployeeCard  />
+},
+```
+
+И компонента `EmployeeCard`:
+
+```js
+import { useParams } from 'react-router-dom';
+import  './index.css';
+
+const EmployeeCard = () => {
+	// константа содержит в себе объект с полями `department` и `id`
+	const pathVariables = useParams();
+
+	// или вариант с деструктуризацией:
+	const { department, id } = useParams();
+
+	...
+	return (
+		...
+	);
+}
+
+export  default  EmployeeCard;
+```
+
+##### 1.6.2. Параметры запроса
+
+Параметры запроса представляют из себя пары ключ-значение, которые указаны в конце пути. Параметры запроса указываются после знака `?` и разделяются символом `&`, например:
+
+`https://www.wildberries.ru/catalog/.../pizhamy-i-sorochki?sort=popular&page=1&xsubject=1935`
+
+Данная ссылка содержит параметры запроса:
+
+- `sort` со значением `popular`
+- `page` со значением `1`
+- `xsubject` со значением `1935`
+
+Для получения параметров запроса используется хук `useSearchParams`. Он предоставляет пользователю состояние, содержащее объект, полями которого являются сами параметры. Рассмотрим пример, где объект роутера представлен таким образом:
+
+```js
+{
+	path:  '/catalog',
+	element:  <CatalogPage  />
+},
+```
+
+А компонент `CatalogPage` представлен таким образом:
+
+```js
+import { useSearchParams } from 'react-router-dom';
+import  './index.css';
+
+const CatalogPage = () => {
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	...
+	return (
+		...
+	);
+}
+
+export  default  CatalogPage;
+```
+
+При этом, если мы перейдем по ссылке `.../catalog?sort=latest`, то в состоянии `searchParams` будет находиться объект следующего вида:
+
+```js
+{
+	sort: 'latest',
+}
+```
+
+При помощи функции `setSearchParams` можно добавлять или изменять параметры запроса. Например, если мы находимся на странице `.../catalog?sort=latest` и вызываем функцию `setSearchParams({ sort: 'newest' })`, то в ссылке отобразится новое значение параметра `sort`: `.../catalog?sort=newest`
+
+#### 1.5. Предметная область
+
+Создайте сайт, представляющий маркетплейс автомобилей. На главной странице представлен каталог с карточками автомобилей. При нажатии на карточку происходит переход в детальную карточку конкретного автомобиля.
+
+### Dockerfile
+
+Создаём Dockerfile для проекта с содержимым:
+
+```Dockerfile
+FROM node:latest
+COPY . /app
+WORKDIR /app
+RUN yarn install
+EXPOSE 3000
+CMD ["npm", "run", "start"]
+```
+
+### Репозиторий
+
+Создаём репозиторий на [GitHub](https://github.com). С названием `culinary-blog`, например
+
+Выкладываем свой проект на удаленный репозиторий:
+
+```bash
+git init
+git add .
+git commit -m "init"
+git remote add origin <ссылка на ваш репозиторий>
+git push origin master
+```
+
+На виртуальной машине клонируем свой проект из GitHub:
+
+```bash
+git clone <ссылка на ваш репозиторий>
+```
+
+После каждого изменения в своём проекте в Visual Studio Code необходимо фиксировать изменения в системе контроля версий. Для этого необходимо последовательно выполнять команды:
+
+1. `git add .` - добавление всех измененных файлов в так называемый `stage`. Там хранятся файлы, которые готовы к коммиту
+2. `git commit -m "сообщение коммита"` - создание коммита. Коммит хранит изменения кода. При создании коммита обязательно указать сообщение - это параметр `-m` со строковым значением, например, `"сообщение коммита"`
+3. `git push origin master` - отправка изменений в удаленный репозиторий. Все коммиты, которые Вы сделали ранее будут отправлены в удаленный репозиторий с названием `origin` (это тот, который мы добавили при инициализации репозитория) в ветку с названием `master`
+
+При этом на виртуальной машине необходимо выполнить команду `git pull`. Она обновляет локальный репозиторий изменениями из удаленного репозитория. Команду необходимо выполнять в папке склонированного репозитория
+
+### Сборка и запуск
+
+Собираем проект из Dockerfile:
+
+```bash
+sudo docker build -t culinary-blog .
+```
+
+Здесь параметр `-t` со значением `culinary-blog` означает, что мы задаём образу контейнера название `culinary-blog`. Точка в конце команды означает, что мы ищем Dockerfile в текущей директори. Соответственно, команду необходимо выполнять в папке склонированного репозитория
+
+Запускаем собранный Docker-образ:
+
+```bash
+sudo docker run -d -p 80:3000 culinary-blog
+```
+
+Здесь параметр `-d` означает `detached`, то есть отсоединённый (после запуска мы выйдем из контейнера).
+
+Переходим в браузере на свой IP-адрес и просматриваем созданный кулинарный блог
